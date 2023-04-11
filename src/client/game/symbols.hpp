@@ -35,6 +35,7 @@ namespace game
 	WEAK symbol<void(int localClientNum, eModes fromMode, eModes toMode, uint32_t flags)> Com_SwitchMode{
 		0x14214A4D0
 	};
+	WEAK symbol<const char*(const char* fullpath)> Com_LoadRawTextFile{0x1420F61B0};
 
 	WEAK symbol<void(int localClientNum, const char* text)> Cbuf_AddText{0x1420EC010, 0x1404F75B0};
 	WEAK symbol<void(int localClientNum, ControllerIndex_t controllerIndex, const char* buffer)> Cbuf_ExecuteBuffer{
@@ -74,6 +75,9 @@ namespace game
 	// Live
 	WEAK symbol<bool(uint64_t, int*, bool)> Live_GetConnectivityInformation{0x141E0C380};
 
+	// Info
+	WEAK symbol<const char* (const char*, const char* key)> Info_ValueForKey{ 0x1422E87B0 };
+
 	// MSG
 	WEAK symbol<uint8_t(msg_t* msg)> MSG_ReadByte{0x142155450, 0x14050D1B0};
 
@@ -104,9 +108,15 @@ namespace game
 	WEAK symbol<const char*(const dvar_t* dvar)> Dvar_GetString{0x1422BF590, 0x140575E30};
 	WEAK symbol<const char*(const dvar_t* dvar)> Dvar_DisplayableValue{0x1422BC080};
 	WEAK symbol<bool(const dvar_t* dvar)> Dvar_GetBool{0x1422BCED0};
+	WEAK symbol<int(const dvar_t* dvar)> Dvar_GetInt{0x0, 0x140575C20};
+	WEAK symbol<float(const dvar_t* dvar)> Dvar_GetFLoat{0x0, 0x140575B20};
 	WEAK symbol<dvar_t*(dvarStrHash_t hash, const char* dvarName, bool value, int flags,
 	                    const char* description)> Dvar_RegisterBool{
 		0x1422D0900, 0x14057B500
+	};
+	WEAK symbol<dvar_t*(dvarStrHash_t hash, const char* dvarName, float value, float min, float max, unsigned int flags,
+	                    const char* description)> Dvar_RegisterFloat{
+		0x0, 0x14057B6B0
 	};
 	WEAK symbol<dvar_t*(dvarStrHash_t hash, const char* dvarName, bool value, int flags,
 	                    const char* description)> Dvar_SessionModeRegisterBool{
@@ -136,9 +146,10 @@ namespace game
 	WEAK symbol<void(hks::lua_State*, const char*)> Lua_CoD_LoadLuaFile{0x141F11A20, 0x0};
 	WEAK symbol<void(int localClientNum)> CG_LUIHUDRestart{0x140F7E970};
 	WEAK symbol<void(int localClientNum)> CL_CheckKeepDrawingConnectScreen{0x1413CCAE0};
+	WEAK symbol<void(const char* key, int value, hks::lua_State* luaVM)> Lua_SetTableInt{ 0x141F066E0 };
 
 	// Scr
-	WEAK symbol<void(scriptInstance_t inst, int value)> Scr_AddInt{0x0, 0x14016F160};
+	WEAK symbol<void(scriptInstance_t inst, int value)> Scr_AddInt{0x1412E9870, 0x14016F160};
 	WEAK symbol<void(scriptInstance_t inst, const char* value)> Scr_AddString{0x0, 0x14016F320};
 	WEAK symbol<const char*(scriptInstance_t inst, unsigned int index)> Scr_GetString{0x0, 0x140171490};
 	WEAK symbol<void(gentity_s* ent, ScrVarCanonicalName_t stringValue, unsigned int paramcount)> Scr_Notify_Canon{
@@ -156,15 +167,26 @@ namespace game
 		0x141CD98D0
 	};
 
+	// PCache
+	WEAK symbol<void(ControllerIndex_t controllerIndex)> PCache_DeleteEntries{0x141E8D710};
+
 	// SV
 	WEAK symbol<bool()> SV_Loaded{0x142252250, 0x140535460};
 	WEAK symbol<void*()> SV_AddTestClient{0x142248F40, 0x14052E3E0};
-	WEAK symbol<void(int clientNum, svscmd_type type, const char* text)> SV_GameSendServerCommand{0x14224F580, 0x140532CA0};
+	WEAK symbol<void (netadr_t from)> SV_DirectConnect{0x142249880, 0x14052EC60};
+	WEAK symbol<void(int clientNum, svscmd_type type, const char* text)> SV_GameSendServerCommand{
+		0x14224F580, 0x140532CA0
+	};
 	WEAK symbol<void(client_s* cl_0, svscmd_type type, const char* fmt, ...)> SV_SendServerCommand{0x0, 0x140537F10};
 	WEAK symbol<bool(int clientNum)> SV_IsTestClient{0x14224AB60, 0x14052FF40};
 	WEAK symbol<void(int controllerIndex, const char* server, MapPreload preload, bool savegame)> SV_SpawnServer{
 		0x1422528C0, 0x140535B20
 	};
+	WEAK symbol<void(const char* text_in)> SV_Cmd_TokenizeString{0x1420EF130, 0x1404FA6C0};
+	WEAK symbol<void()> SV_Cmd_EndTokenizedString{0x1420EF0E0, 0x1404FA670};
+
+	// FS
+	WEAK symbol<char*(int bytes)> FS_AllocMem{0x1422AC9F0, 0x14056C340};
 
 	// Utils
 	WEAK symbol<const char*(char* str)> I_CleanStr{0x1422E9050, 0x140580E80};
@@ -183,6 +205,15 @@ namespace game
 
 	WEAK symbol<char> s_dvarPool{0x157AC6220, 0x14A3CB620};
 	WEAK symbol<int> g_dvarCount{0x157AC61CC, 0x14A3CB5FC};
+
+	WEAK symbol<int> fs_loadStack{0x157A65310, 0x14A39C650};
+
+	// Client and dedi struct size differs :(
+	WEAK symbol<client_s_cl*> svs_clients_cl{0x1576F9318, 0};
+	WEAK symbol<client_s*> svs_clients{0x0, 0x14A178E98};
+
+	// Dvar variables
+	WEAK symbol<dvar_t*> com_maxclients{0x0, 0x14948EE70};
 
 	namespace s_wcd
 	{
